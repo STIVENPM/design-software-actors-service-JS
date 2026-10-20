@@ -17,6 +17,7 @@ import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -142,6 +143,7 @@ public class LearnerController {
         return ResponseEntity.noContent().build();
     }
 
+    @Transactional
     @PostMapping("/{id}/ficha-enrollments")
     @PreAuthorize("hasAuthority('ACT_LEARNER_MANAGE')")
     public ResponseEntity<LearnerFichaEnrollmentResponse> createFichaEnrollment(

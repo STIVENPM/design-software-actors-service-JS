@@ -1,0 +1,40 @@
+spring:
+  liquibase:
+    enabled: false
+  # No defaults for DB secrets (same rule as iam-service and application.yml).
+  # Tests/CI must export ACTORS_DB_URL/USER/PASSWORD explicitly.
+  datasource:
+    url: ${ACTORS_DB_URL}
+    username: ${ACTORS_DB_USER}
+    password: ${ACTORS_DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        default_schema: actors_instructors
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri:
+          jwk-set-uri:
+
+management:
+  otlp:
+    tracing:
+      endpoint: http://localhost:4318/v1/traces
+
+logging:
+  level:
+    co.sena.actors: INFO
+    org.hibernate.SQL: WARN
+
+academic-management:
+  base-url: http://127.0.0.1:1
+
+# Tests: enables the ephemeral decoder (ITs replace it with @MockBean
+# and use mocked JWTs; no real token is validated here).
+actors:
+  security:
+    dev-jwt-decoder: true

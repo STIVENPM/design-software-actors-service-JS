@@ -1,0 +1,7 @@
+# Local development profile: allows the ephemeral JwtDecoder fallback
+# when IAM is not configured. NEVER copy this flag to QA/staging/prod
+# (those environments must validate against the IAM JWKS).
+# Run with: java -jar actors-api-*.jar --spring.profiles.active=dev
+actors:
+  security:
+    dev-jwt-decoder: true

@@ -1,0 +1,84 @@
+server:
+  port: 8080
+  ssl:
+    enabled: ${ACTORS_TLS_ENABLED:false}
+    key-store: ${ACTORS_TLS_KEY_STORE:}
+    key-store-password: ${ACTORS_TLS_KEY_STORE_PASSWORD:}
+    key-store-type: PKCS12
+    trust-store: ${ACTORS_TLS_TRUST_STORE:}
+    trust-store-password: ${ACTORS_TLS_TRUST_STORE_PASSWORD:}
+    trust-store-type: PKCS12
+    client-auth: ${ACTORS_TLS_CLIENT_AUTH:need}
+
+academic-management:
+  base-url: ${ACADEMIC_MANAGEMENT_BASE_URL}
+
+spring:
+  application:
+    name: actors-service
+
+  # No defaults for DB secrets: a missing env must stop startup instead of
+  # silently connecting somewhere guessable (same rule as iam-service).
+  datasource:
+    url: ${ACTORS_DB_URL}
+    username: ${ACTORS_DB_USER}
+    password: ${ACTORS_DB_PASSWORD}
+    hikari:
+      schema: actors_instructors
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        default_schema: actors_instructors
+        jdbc:
+          time_zone: UTC
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${IAM_JWT_ISSUER:}
+          jwk-set-uri: ${IAM_JWKS_URI:}
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.add.type.headers: false
+
+actors:
+  iam:
+    consumer:
+      enabled: ${ACTORS_IAM_CONSUMER_ENABLED:false}
+    exchange: ${IAM_EVENTS_EXCHANGE:iam-events}
+    # Required when enabled. Names belong to the approved inbound topology.
+    queue: ${ACTORS_IAM_QUEUE:}
+    dlx: ${ACTORS_IAM_DLX:}
+    dlq: ${ACTORS_IAM_DLQ:}
+
+# QA/staging/prod MUST set IAM_JWT_ISSUER or IAM_JWKS_URI: the real JWKS
+# decoder is mandatory there (no fallback decoder exists outside
+# dev/test profiles).
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  tracing:
+    sampling:
+      probability: 1.0
+  otlp:
+    tracing:
+      endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT:http://localhost:4318/v1/traces}
+      transport: http
+  observations:
+    annotations:
+      enabled: true
+
+logging:
+  level:
+    co.sena.actors: INFO

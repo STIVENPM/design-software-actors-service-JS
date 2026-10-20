@@ -8,6 +8,7 @@ import co.sena.actors.core.port.in.InstructorAvailabilityExceptionUseCase;
 import jakarta.validation.Valid;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +33,7 @@ public class InstructorAvailabilityExceptionController {
         this.currentUserProvider = currentUserProvider;
     }
 
+    @Transactional
     @PostMapping("/{id}/availability-exceptions")
     @PreAuthorize("hasAnyAuthority('ACT_INSTRUCTOR_MANAGE')")
     public ResponseEntity<AvailabilityExceptionResponse> createException(

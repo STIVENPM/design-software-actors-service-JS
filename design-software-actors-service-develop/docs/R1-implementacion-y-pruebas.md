@@ -39,6 +39,11 @@ R1 añade outbox transaccional a los eventos de disponibilidad de instructores y
 
 Abrir `http://127.0.0.1:25046/actors/`, iniciar sesión con una cuenta local válida y recorrer la sección de instructores. La interfaz confirma el flujo visual shell → MFE → API → PostgreSQL previamente validado; el estado del outbox se verifica con consultas a PostgreSQL/Kafka, no aparece en la interfaz del MFE.
 
+### Contexto visual de la parte 1
+
+![Shell autenticado con el MFE de Actors y directorio de instructores](evidence/instructores-sesion-local-admin.png)
+
+Captura aportada por José Stiven. Muestra la interfaz de instructores y la sesión local; sirve como contexto del sistema sobre el que se implementó R1. La captura **no demuestra** la entrega del outbox, la deduplicación ni el replay: esas pruebas constan en los resultados PostgreSQL, Kafka y RabbitMQ anteriores.
 ## Seguridad y límites
 
 No guardar JWT, contraseñas ni respuestas completas en evidencias. Los puertos del stack local se enlazan a `127.0.0.1`; Kafka no publica puerto. Las operaciones internas no están en el gateway. Antes de despliegue compartido, crear un permiso de operaciones específico y verificar los consumidores de `actors-events` respecto de idempotencia por `event_id`.
